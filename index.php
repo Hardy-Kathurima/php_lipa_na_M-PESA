@@ -1,17 +1,25 @@
 <?php
-$error = "";
-$success = "";
+
+$mobile = $amount = $success = "";
+$mobileRegex = "/^[2][5][4]+[\d]{9,}$/";
+$amountRegex = "/^([1-9][0-9]?|100)$/";
+
 
 if (isset($_POST["submit"])) {
-
-
-
     if (empty($_POST['mobile']) || empty($_POST["amount"])) {
-        $error = "Please fill all the required fields";
+        $mobile = $_POST["mobile"];
+        $amount = $_POST["amount"];
     } else {
         $mobile = $_POST["mobile"];
         $amount = $_POST["amount"];
-        $success = "Payment of sh $amount to M-PESA was successful";
+        if (preg_match($mobileRegex, $_POST['mobile'])) {
+            $mobile = $_POST["mobile"];
+        }
+        if (preg_match($amountRegex, $_POST['amount'])) {
+            $amount = $_POST["amount"];
+        }
+
+        $success = "Payment of sh $amount.00 to M-PESA was successful";
     }
 }
 
@@ -57,24 +65,16 @@ if (isset($_POST["submit"])) {
                     <form method="POST">
                         <label for="mobile">Mobile Number</label>
                         <div class="form-group">
-                            <input type="text" name="mobile" id="mobile" class="form-control" placeholder="enter mobile" value="<?php echo $_POST["mobile"] ?>">
+                            <input type="text" name="mobile" id="mobile" class="form-control" placeholder="enter mobile" value="<?php echo $mobile ?>" required pattern="^[2][5][4]+[\d]{9,}$" title="25474356798">
                         </div>
                         <label for=amount">Amount</label>
                         <div class="form-group">
-                            <input type="number" name="amount" id=amount" class="form-control" placeholder="enter amount" value="<?php echo $_POST["amount"] ?>">
+                            <input type="text" name="amount" id=amount" class="form-control" placeholder="enter amount" value="<?php echo $amount ?>" required pattern="^([1-9][0-9]?|100)$" title="sh 1.00 - sh 99.00">
                         </div>
                         <div class="form-group">
                             <input type="submit" name="submit" class="btn btn-success" value="make payment">
                         </div>
                     </form>
-
-                    <?php if ($error) : ?>
-                        <div class="alert alert-danger text-center"> <?php echo $error ?>
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        </div>
-
-                    <?php endif; ?>
-
                     <?php if ($success) : ?>
                         <div class="alert alert-success text-center alert-dismissible "> <?php echo $success ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
